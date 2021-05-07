@@ -1,0 +1,170 @@
+
+.banner1 {
+  display: inline-block;
+  width: 100%;
+  max-width: 600px;
+  border: 1px solid rgba(255, 0, 0, .3);
+  
+  .top, .bottom {
+    display: inline-flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+    
+    width: 100%;
+    border: 1px solid rgba(255, 0, 0, .3);
+  }
+
+  .top {
+    > * {
+      display: inline-block;
+    }
+    .left, .right {
+      width: 36px;
+      height: 36px;
+      line-height: 36px;
+      cursor: pointer;
+      background-color: rgba(0, 0, 255, 0.2);
+      flex-shrink: 0;
+    }
+    .boxs {
+      flex-grow: 1;
+      position: relative;
+      margin: 0 10px;
+    }
+  }
+
+  .bottom {
+    width: 100%;
+    margin-top: 20px;
+    > * {
+      display: inline-block;
+      width: 12px;
+      height: 12px;
+      background-color: rgba(0, 0, 0, 0.2);
+      margin: 0 4px;
+      cursor: pointer;
+      @include transition(background-color .3s);
+      
+      @include border-radius(50%);
+    }
+  }
+
+  $boxHeigth: 100px; // 小盒子高
+  $boxsSpaceH: 20px; // 左右間距
+  $totalBox: 13; // 小盒子 最多數量
+
+  $boxMobileHeigth: 150px; // 手機版 小盒子 高
+  $boxsMobileSpaceV: 10px; // 手機版 小盒子 上下間距
+  $boxsMobileSpaceH: 10px; // 手機版 小盒子 左右間距
+  
+  .boxs {
+    overflow: hidden;
+    height: $boxHeigth;
+    @include range-width(0, 450px) {
+      height: $boxMobileHeigth;
+    };
+  }
+  .box {
+    position: absolute;
+    left: 0;
+    top: 0;
+    display: inline-block;
+    width: calc(100% / 3 - #{$boxsSpaceH * 2 / 3});
+    height: $boxHeigth;
+    @include range-width(0, 450px) {
+      height: $boxMobileHeigth;
+    };
+    border: 1px solid rgba(255, 0, 0, .3);
+    text-decoration: none;
+    @include transition(left .3s);
+    background-color: rgba(0, 0, 255, 0.2);
+    
+    @include range-width(0, 450px) {
+      .cover {
+        display: none;
+      }
+    }
+    @include range-width(450px) {
+      .cover {
+        position: absolute;
+        left: 0;
+        top: 0;
+        display: inline-block;
+        width: 100%;
+        height: 100%;
+        background-color: rgba(0, 0, 0, 0.2);
+        
+        display: inline-flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+
+        padding: 10px;
+        
+        button {
+          display: inline-block;
+          width: 100%;
+          + button {
+            margin-top: 4px;
+          }
+        }
+        @include opacity(0);
+        @include transition(opacity .3s);
+      }
+
+      &:hover {
+        .cover {
+          @include opacity(1);
+        }
+      }
+    };
+  }
+
+  @for $i from 1 through ceil($totalBox / 3) {
+    &[p='#{$i}'] {
+      @for $j from 1 through $totalBox {
+        .box:nth-child(#{$j}) {
+          left: calc((100% * #{floor(($j - 1) / 3) - ($i - 1)}) + (#{($j - 1) % 3} * ((100% / 3 - #{$boxsSpaceH * 2 / 3}) + #{$boxsSpaceH})));
+        }
+      }
+      .bottom > *:nth-child(#{$i}) {
+        background-color: rgba(0, 0, 0, 0.5);
+      }
+    }
+  }
+
+  @include range-width(0, 450px) {
+    .top {
+      .left, .right {
+        display: none;
+      }
+      .boxs {
+        margin: 0;
+      }
+    }
+    .bottom {
+      display: none;
+    }
+    .boxs {
+      overflow-x: scroll;
+      
+      display: inline-flex;
+      flex-direction: row;
+      align-items: center;
+      justify-content: flex-start;
+      padding: 0 $boxsMobileSpaceV;
+    }
+    .box {
+      position: relative;
+      left: auto !important;
+      top: auto !important;
+      width: 100%;
+      height: calc(100% - #{$boxsMobileSpaceV * 2});
+      flex-shrink: 0;
+      + .box {
+        margin-left: 10px;
+      }
+    }
+  };
+}
